@@ -13,7 +13,7 @@ func NewHTTPServer(ctx context.Context, endpoints Endpoints) http.Handler {
 	m.Handle("/keygen", httptransport.NewServer(
 		endpoints.GenerateKeyEndpoint,
 		DecodeGenerateKeyRequest,
-		EncodeResponse,
+		EncodeGenerateKeyResponse,
 	))
 	return m
 }

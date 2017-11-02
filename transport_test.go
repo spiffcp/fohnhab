@@ -33,7 +33,7 @@ var _ = Describe("Transport", func() {
 			ex.Kind = "aes-256"
 			BeforeEach(func() {
 				js = []byte(`{"kind":"aes-256"}`)
-				r = httptest.NewRequest("GET", "http://encryptionService.com", bytes.NewBuffer(js))
+				r = httptest.NewRequest("POST", "http://encryptionService.com", bytes.NewBuffer(js))
 				t, err = fohnhab.DecodeGenerateKeyRequest(ctx, r)
 			})
 			It("Does not error", func() {
@@ -47,7 +47,7 @@ var _ = Describe("Transport", func() {
 		Context("When decoding an invalid GenerateKeyRequest", func() {
 			BeforeEach(func() {
 				js = []byte(`{""kind"""aes-256"}`)
-				r = httptest.NewRequest("GET", "http://encryptionService.com", bytes.NewBuffer(js))
+				r = httptest.NewRequest("POST", "http://encryptionService.com", bytes.NewBuffer(js))
 				t, err = fohnhab.DecodeGenerateKeyRequest(ctx, r)
 			})
 			It("Should error", func() {
@@ -69,7 +69,7 @@ var _ = Describe("Transport", func() {
 					Key: "57129476B8A8421DC968DA99B2B3F",
 				}
 				w = httptest.NewRecorder()
-				err = fohnhab.EncodeResponse(ctx, w, r)
+				err = fohnhab.EncodeGenerateKeyResponse(ctx, w, r)
 				resp = w.Result()
 				body, _ = ioutil.ReadAll(resp.Body)
 			})
@@ -92,15 +92,15 @@ var _ = Describe("Transport", func() {
 					Err: "Type aes-243 not found",
 				}
 				w = httptest.NewRecorder()
-				err = fohnhab.EncodeResponse(ctx, w, r)
+				err = fohnhab.EncodeGenerateKeyResponse(ctx, w, r)
 				resp = w.Result()
 				body, _ = ioutil.ReadAll(resp.Body)
 			})
 			It("Should not error", func() {
 				Expect(err).To(Not(HaveOccurred()))
 			})
-			It("Should return correctly formatted json", func() {
-				Expect(resp.Header.Get("Content-Type")).To(Equal("application/json"))
+			It("Should have a 400 status code", func() {
+				Expect(resp.StatusCode).To(Equal(400))
 			})
 		})
 	})

@@ -5,6 +5,8 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+
+	l "github.com/go-kit/kit/log"
 )
 
 // Service is an interface that contains all of the endpoints the server will expose
@@ -15,8 +17,11 @@ type Service interface {
 type fohnhabService struct{}
 
 // NewService is a constructor for our fohnhab service
-func NewService() Service {
-	return fohnhabService{}
+func NewService(logger l.Logger) Service {
+	var svc Service
+	svc = fohnhabService{}
+	svc = logginMiddleware{logger, svc}
+	return svc
 }
 
 func (fohnhabService) GenerateKey(ctx context.Context, req GenerateKeyRequest) (string, error) {

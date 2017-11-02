@@ -23,7 +23,7 @@ var _ = Describe("ServerHttp", func() {
 		Context("When passing in an endpoints struct to NewHttpServer", func() {
 			BeforeEach(func() {
 				js = []byte(`{"kind":"aes-256"}`)
-				r = httptest.NewRequest("GET", "/keygen", bytes.NewBuffer(js))
+				r = httptest.NewRequest("POST", "/keygen", bytes.NewBuffer(js))
 				svc = fohnhab.NewService()
 				e.GenerateKeyEndpoint = fohnhab.MakeGenerateKeyEndpoint(svc)
 				h = fohnhab.NewHTTPServer(c, e)

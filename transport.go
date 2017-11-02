@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-kit/kit/endpoint"
+	l "github.com/go-kit/kit/log"
 )
 
 // GenerateKeyRequest models an incoming request to the GenerateKeyEndpoint
@@ -22,6 +23,17 @@ type GenerateKeyResponse struct {
 // Endpoints models the collection of endpoints our service will use when being run
 type Endpoints struct {
 	GenerateKeyEndpoint endpoint.Endpoint
+}
+
+// Middleware serves as an endpoint decorater to implement logging at the transport and application level
+type Middleware func(endpoint.Endpoint) endpoint.Endpoint
+
+// MakeEndpoints returns the endpoints implemented by the service
+func MakeEndpoints(svc Service, logger l.Logger) Endpoints {
+	var ep Endpoints
+	ep.GenerateKeyEndpoint = MakeGenerateKeyEndpoint(svc)
+	ep.GenerateKeyEndpoint = transportMiddleware(l.With(logger, "method", "keygen"))(ep.GenerateKeyEndpoint)
+	return ep
 }
 
 // MakeGenerateKeyEndpoint constructs an endpoint to be served byt our service
@@ -53,8 +65,12 @@ func DecodeGenerateKeyRequest(ctx context.Context, r *http.Request) (interface{}
 	return req, err
 }
 
-// EncodeResponse converts a given response struct to *http.Response to be written to the respective client
-func EncodeResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+// EncodeGenerateKeyResponse converts a given response struct to *http.Response to be written to the respective client
+func EncodeGenerateKeyResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	err := response.(GenerateKeyResponse).Err
+	if err != "" {
+		w.WriteHeader(http.StatusBadRequest)
+	}
 	w.Header().Set("Content-Type", "application/json")
 	return json.NewEncoder(w).Encode(response)
 }
