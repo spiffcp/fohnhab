@@ -1,0 +1,17 @@
+mode: set
+github.com/spiffcp/fohnhab/server_http.go:11.75,19.2 3 1
+github.com/spiffcp/fohnhab/service.go:18.27,20.2 1 1
+github.com/spiffcp/fohnhab/service.go:22.96,30.14 3 1
+github.com/spiffcp/fohnhab/service.go:42.2,42.23 1 1
+github.com/spiffcp/fohnhab/service.go:31.17,35.17 4 1
+github.com/spiffcp/fohnhab/service.go:38.3,38.53 1 1
+github.com/spiffcp/fohnhab/service.go:39.10,40.46 1 1
+github.com/spiffcp/fohnhab/service.go:35.17,37.4 1 0
+github.com/spiffcp/fohnhab/transport.go:28.61,29.77 1 1
+github.com/spiffcp/fohnhab/transport.go:29.77,36.17 4 1
+github.com/spiffcp/fohnhab/transport.go:41.3,42.19 2 1
+github.com/spiffcp/fohnhab/transport.go:36.17,40.4 3 0
+github.com/spiffcp/fohnhab/transport.go:47.90,50.60 3 1
+github.com/spiffcp/fohnhab/transport.go:53.2,53.17 1 1
+github.com/spiffcp/fohnhab/transport.go:50.60,52.3 1 1
+github.com/spiffcp/fohnhab/transport.go:57.93,60.2 2 1
