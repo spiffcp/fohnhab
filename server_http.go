@@ -4,6 +4,8 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	httptransport "github.com/go-kit/kit/transport/http"
 )
 
@@ -15,5 +17,6 @@ func NewHTTPServer(ctx context.Context, endpoints Endpoints) http.Handler {
 		DecodeGenerateKeyRequest,
 		EncodeGenerateKeyResponse,
 	))
+	m.Handle("/metrics", promhttp.Handler())
 	return m
 }

@@ -32,7 +32,7 @@ func main() {
 	s := fohnhab.NewService(logger)
 	endpoints := fohnhab.MakeEndpoints(s, logger)
 	go func() {
-		log.Println("http:", *httpAddr)
+		logger.Log("transport", "HTTP", "addr", *httpAddr, "msg", "listening")
 		handler := fohnhab.NewHTTPServer(ctx, endpoints)
 		errChan <- http.ListenAndServe(*httpAddr, handler)
 	}()

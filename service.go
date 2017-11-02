@@ -21,6 +21,9 @@ func NewService(logger l.Logger) Service {
 	var svc Service
 	svc = fohnhabService{}
 	svc = logginMiddleware{logger, svc}
+	count := configureRequestCount()
+	hist := configureRequestLatency()
+	svc = instrumentingMiddleware{count, hist, svc}
 	return svc
 }
 

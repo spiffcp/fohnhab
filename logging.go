@@ -32,7 +32,6 @@ func (mw logginMiddleware) GenerateKey(ctx context.Context, req GenerateKeyReque
 		mw.logger.Log(
 			"method", "generatekey",
 			"input", req.Kind,
-			"output", output,
 			"err", err,
 			"took", time.Since(begin),
 		)
