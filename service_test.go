@@ -12,7 +12,6 @@ var _ = Describe("Service", func() {
 
 		Describe("GenerateKey", func() {
 			var (
-				s   fohnhab.Service
 				t   string
 				err error
 				c   fohnhab.GenerateKeyRequest
@@ -21,7 +20,6 @@ var _ = Describe("Service", func() {
 			Context("When called with correct arguments", func() {
 				BeforeEach(func() {
 					c.Kind = "aes-256"
-					s = fohnhab.NewService()
 					t, err = s.GenerateKey(ctx, c)
 				})
 				It("Should not error", func() {
@@ -36,7 +34,6 @@ var _ = Describe("Service", func() {
 			Context("When called with an incorrect argument", func() {
 				BeforeEach(func() {
 					c.Kind = "aes-2555"
-					s = fohnhab.NewService()
 					t, err = s.GenerateKey(ctx, c)
 				})
 				It("Should return an error", func() {

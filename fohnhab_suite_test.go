@@ -1,16 +1,40 @@
 package fohnhab_test
 
 import (
+	"bufio"
+	"log"
+	"os"
+
+	l "github.com/go-kit/kit/log"
 	"github.com/onsi/ginkgo"
 	"github.com/onsi/gomega"
+	"github.com/spiffcp/fohnhab"
 
 	"testing"
+)
+
+var (
+	s      fohnhab.Service
+	logger l.Logger
+	e      fohnhab.Endpoints
 )
 
 func TestFohnhab(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Fohnhab Suite")
 }
+
+var _ = BeforeSuite(func() {
+	f, err := os.Create("/tmp/testing")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	w := bufio.NewWriter(f)
+	logger = l.NewLogfmtLogger(w)
+	s = fohnhab.NewService(logger)
+	e = fohnhab.MakeEndpoints(s, logger)
+})
 
 // Declarations for Ginkgo DSL
 type Done ginkgo.Done

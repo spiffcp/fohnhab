@@ -9,8 +9,6 @@ import (
 	"net/http/httptest"
 	"reflect"
 
-	"github.com/go-kit/kit/endpoint"
-
 	"github.com/spiffcp/fohnhab"
 )
 
@@ -107,8 +105,6 @@ var _ = Describe("Transport", func() {
 
 	Describe("Endpoints", func() {
 		var (
-			s   fohnhab.Service
-			e   endpoint.Endpoint
 			req fohnhab.GenerateKeyRequest
 			res interface{}
 		)
@@ -116,18 +112,21 @@ var _ = Describe("Transport", func() {
 			Context("When passed a valid Service", func() {
 				BeforeEach(func() {
 					req.Kind = "aes-256"
-					s = fohnhab.NewService()
-					e = fohnhab.MakeGenerateKeyEndpoint(s)
-					res, err = e(ctx, req)
+					res, err = e.GenerateKeyEndpoint(ctx, req)
 				})
 				It("Should return an endpoint implementation", func() {
-					Expect(reflect.TypeOf(e).Kind()).To(Equal(reflect.Func))
+					Expect(reflect.TypeOf(e.GenerateKeyEndpoint).Kind()).To(Equal(reflect.Func))
 				})
 				It("Should not error when called", func() {
 					Expect(err).To(Not(HaveOccurred()))
 				})
 				It("Should call the GenerateKey function", func() {
 					Expect(res.(fohnhab.GenerateKeyResponse).Err).To(Equal(""))
+				})
+				It("Should put errors on the response correctly", func() {
+					req.Kind = "aes-246"
+					res, _ = e.GenerateKeyEndpoint(ctx, req)
+					Expect(res.(fohnhab.GenerateKeyResponse).Err).To(Not(BeNil()))
 				})
 			})
 		})

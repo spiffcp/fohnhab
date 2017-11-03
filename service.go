@@ -20,7 +20,7 @@ type fohnhabService struct{}
 func NewService(logger l.Logger) Service {
 	var svc Service
 	svc = fohnhabService{}
-	svc = logginMiddleware{logger, svc}
+	svc = loggingMiddleware{logger, svc}
 	count := configureRequestCount()
 	hist := configureRequestLatency()
 	svc = instrumentingMiddleware{count, hist, svc}
@@ -39,10 +39,7 @@ func (fohnhabService) GenerateKey(ctx context.Context, req GenerateKeyRequest) (
 	case "aes-256":
 		c := 32
 		key = make([]byte, c)
-		_, err := rand.Read(key)
-		if err != nil {
-			return "", err
-		}
+		rand.Read(key)
 		keyString = base64.StdEncoding.EncodeToString(key)
 	default:
 		err = fmt.Errorf("Type %v not found", kind)

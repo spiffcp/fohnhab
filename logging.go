@@ -22,12 +22,12 @@ func transportMiddleware(l log.Logger) Middleware {
 }
 
 // Application
-type logginMiddleware struct {
+type loggingMiddleware struct {
 	logger log.Logger
 	next   Service
 }
 
-func (mw logginMiddleware) GenerateKey(ctx context.Context, req GenerateKeyRequest) (output string, err error) {
+func (mw loggingMiddleware) GenerateKey(ctx context.Context, req GenerateKeyRequest) (output string, err error) {
 	defer func(begin time.Time) {
 		mw.logger.Log(
 			"method", "generatekey",

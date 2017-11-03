@@ -36,7 +36,7 @@ func MakeEndpoints(svc Service, logger l.Logger) Endpoints {
 	return ep
 }
 
-// MakeGenerateKeyEndpoint constructs an endpoint to be served byt our service
+// MakeGenerateKeyEndpoint constructs an endpoint to be served by our service
 func MakeGenerateKeyEndpoint(svc Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		var (
@@ -55,7 +55,14 @@ func MakeGenerateKeyEndpoint(svc Service) endpoint.Endpoint {
 	}
 }
 
-// DecodeGenerateKeyRequest converts and httpRequest to a request readable by our program
+// GenerateKey with an Endpoint implementation allows us to treat out EP struct as a Service
+func (e Endpoints) GenerateKey(ctx context.Context, r GenerateKeyRequest) (interface{}, error) {
+	resp, _ := e.GenerateKeyEndpoint(ctx, r)
+	gkResp := resp.(GenerateKeyResponse)
+	return gkResp, nil
+}
+
+// DecodeGenerateKeyRequest converts an httpRequest to a request readable by our program (Usable by server)
 func DecodeGenerateKeyRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	var req GenerateKeyRequest
 	var err error
@@ -65,7 +72,13 @@ func DecodeGenerateKeyRequest(ctx context.Context, r *http.Request) (interface{}
 	return req, err
 }
 
-// EncodeGenerateKeyResponse converts a given response struct to *http.Response to be written to the respective client
+func DecodeGenerateKeyResponse(ctx context.Context, r *http.Response) (interface{}, error) {
+	var resp GenerateKeyResponse
+	json.NewDecoder(r.Body).Decode(&resp)
+	return resp, nil
+}
+
+// EncodeGenerateKeyResponse converts a given response struct to *http.Response to be written to the respective client (Usable by server)
 func EncodeGenerateKeyResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
 	err := response.(GenerateKeyResponse).Err
 	if err != "" {
