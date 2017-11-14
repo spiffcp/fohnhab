@@ -28,6 +28,26 @@ func (mw instrumentingMiddleware) GenerateKey(ctx context.Context, req GenerateK
 	return
 }
 
+func (mw instrumentingMiddleware) GCME(ctx context.Context, req GCMERequest) (output string, err error) {
+	defer func(begin time.Time) {
+		instVal := []string{"method", "GCME", "error", fmt.Sprint(err != nil)}
+		mw.requestCount.With(instVal...).Add(1)
+		mw.requestLatency.With(instVal...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+	output, err = mw.next.GCME(ctx, req)
+	return
+}
+
+func (mw instrumentingMiddleware) GCMD(ctx context.Context, req GCMDRequest) (output string, err error) {
+	defer func(begin time.Time) {
+		instVal := []string{"method", "GCMD", "error", fmt.Sprint(err != nil)}
+		mw.requestCount.With(instVal...).Add(1)
+		mw.requestLatency.With(instVal...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+	output, err = mw.next.GCMD(ctx, req)
+	return
+}
+
 func configureRequestCount() *kitprometheus.Counter {
 	var c *kitprometheus.Counter
 	c = kitprometheus.NewCounterFrom(stdprometheus.CounterOpts{

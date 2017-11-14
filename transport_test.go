@@ -60,6 +60,7 @@ var _ = Describe("Transport", func() {
 			r    interface{}
 			body []byte
 			resp *http.Response
+			i    interface{}
 		)
 		Context("When returning a json response for a successful service request", func() {
 			BeforeEach(func() {
@@ -101,13 +102,42 @@ var _ = Describe("Transport", func() {
 				Expect(resp.StatusCode).To(Equal(400))
 			})
 		})
+		Context("When decoding a sucessful generate key response", func() {
+			BeforeEach(func() {
+				r = fohnhab.GenerateKeyResponse{
+					Key: "57129476B8A8421DC968DA99B2B3F",
+				}
+				w = httptest.NewRecorder()
+				err = fohnhab.EncodeGenerateKeyResponse(ctx, w, r)
+				resp = w.Result()
+				i, err = fohnhab.DecodeGenerateKeyResponse(ctx, resp)
+			})
+			It("Should not error", func() {
+				Expect(err).To(Not(HaveOccurred()))
+			})
+			It("Should allow for the interface to be decoded correctly to be read by another program", func() {
+				Expect(i.(fohnhab.GenerateKeyResponse).Key).To(Equal("57129476B8A8421DC968DA99B2B3F"))
+			})
+		})
 	})
 
 	Describe("Endpoints", func() {
 		var (
 			req fohnhab.GenerateKeyRequest
 			res interface{}
+			i   interface{}
 		)
+		Describe("GenerateKey Endpoint Implementation", func() {
+			Context("When calling endpoints.GenerateKey", func() {
+				BeforeEach(func() {
+					req.Kind = "aes-256"
+					i, err = e.GenerateKey(ctx, req)
+				})
+				It("Should return a generate key response", func() {
+					Expect(i.(fohnhab.GenerateKeyResponse).Key).To(Not(BeNil()))
+				})
+			})
+		})
 		Describe("MakeGenerateKeyEndpoint", func() {
 			Context("When passed a valid Service", func() {
 				BeforeEach(func() {

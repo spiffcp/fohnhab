@@ -20,6 +20,18 @@ type GenerateKeyResponse struct {
 	Err string `json:"err,omitempty"`
 }
 
+// GCMERequest models an incoming request to the GCME..Endpoint
+type GCMERequest struct {
+	Key       string `json:"key"`
+	ToEncrypt string `json:"ToEncrypt"`
+}
+
+// GCMDRequest models an incoming request to the GCMDEncdpoint
+type GCMDRequest struct {
+	Key       string `json:"key"`
+	ToDecrypt string `json:"ToDecrypt"`
+}
+
 // Endpoints models the collection of endpoints our service will use when being run
 type Endpoints struct {
 	GenerateKeyEndpoint endpoint.Endpoint
