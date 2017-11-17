@@ -17,6 +17,11 @@ func NewHTTPServer(ctx context.Context, endpoints Endpoints) http.Handler {
 		DecodeGenerateKeyRequest,
 		EncodeGenerateKeyResponse,
 	))
+	m.Handle("/encrypt", httptransport.NewServer(
+		endpoints.GCMEncryptEndpoint,
+		DecodeGCMEncryptRequest,
+		EncodeGCMEncryptResponse,
+	))
 	m.Handle("/metrics", promhttp.Handler())
 	return m
 }

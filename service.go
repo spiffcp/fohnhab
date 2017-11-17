@@ -74,9 +74,9 @@ func (fohnhabService) GCME(ctx context.Context, req GCMERequest) (string, error)
 	io.ReadFull(rand.Reader, nonce[:])
 	out := gcm.Seal(nonce[:], nonce[:], plaintext, nil)
 	s = base64.StdEncoding.EncodeToString(out)
-	fmt.Print(s)
 	return s, e
 }
+
 func (fohnhabService) GCMD(ctx context.Context, req GCMDRequest) (string, error) {
 	var (
 		s string

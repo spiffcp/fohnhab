@@ -2,7 +2,6 @@ package fohnhab_test
 
 import (
 	"context"
-	"encoding/base64"
 
 	"github.com/spiffcp/fohnhab"
 )
@@ -26,8 +25,7 @@ var _ = Describe("Service", func() {
 					Expect(err).To(Not(HaveOccurred()))
 				})
 				It("Should return a 256 bit key for the user as a string", func() {
-					data, _ := base64.StdEncoding.DecodeString(t)
-					Expect(len(data)).To(Equal(32))
+					Expect(len(t)).To(Equal(44))
 				})
 			})
 
@@ -50,8 +48,8 @@ var _ = Describe("Service", func() {
 				ctx context.Context
 			)
 			Context("When called with a valid key and plaintext to encrypt", func() {
-				req.Key = "nTgasCUQyMYJUkVNh5YAwDccX6177Kuc03rc8kvL4Fg="
-				req.ToEncrypt = "Hello GoSec"
+				req.Key = "kB+BmVehHNsxaCqOaZN/s+c/aqRfk4LSfNi52SJOb3I="
+				req.ToEncrypt = "Hello Peter"
 				BeforeEach(func() {
 					et, err = s.GCME(ctx, req)
 				})
@@ -69,8 +67,8 @@ var _ = Describe("Service", func() {
 				ctx context.Context
 			)
 			Context("When called with a valid key and cyphertext to decrypt", func() {
-				req.Key = "nTgasCUQyMYJUkVNh5YAwDccX6177Kuc03rc8kvL4Fg="
-				req.ToDecrypt = "7OFhWKgAot1EKLaGvib0WMSkKf3PMtyzi2wCYrbH/LhV70Cm76PN"
+				req.Key = "kB+BmVehHNsxaCqOaZN/s+c/aqRfk4LSfNi52SJOb3I="
+				req.ToDecrypt = "YzyMcxu8OIE9Tz2nMvpHHlsJq/2CiIx2lFe2/4Ua1pu2cQqIPSWM"
 				BeforeEach(func() {
 					dt, err = s.GCMD(ctx, req)
 					if err != nil {
@@ -78,7 +76,7 @@ var _ = Describe("Service", func() {
 					}
 				})
 				It("Should return the decrpyted text", func() {
-					Expect(dt).NotTo(Equal(""))
+					Expect(dt).To(Equal("Hello Peter"))
 				})
 			})
 		})

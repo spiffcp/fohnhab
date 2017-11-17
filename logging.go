@@ -44,7 +44,7 @@ func (mw loggingMiddleware) GenerateKey(ctx context.Context, req GenerateKeyRequ
 func (mw loggingMiddleware) GCME(ctx context.Context, req GCMERequest) (output string, err error) {
 	defer func(begin time.Time) {
 		mw.logger.Log(
-			"method", "gcm",
+			"method", "gcme",
 			"err", err,
 			"took", time.Since(begin),
 		)
@@ -57,7 +57,7 @@ func (mw loggingMiddleware) GCME(ctx context.Context, req GCMERequest) (output s
 func (mw loggingMiddleware) GCMD(ctx context.Context, req GCMDRequest) (output string, err error) {
 	defer func(begin time.Time) {
 		mw.logger.Log(
-			"method", "gcm",
+			"method", "gcmd",
 			"err", err,
 			"took", time.Since(begin),
 		)
