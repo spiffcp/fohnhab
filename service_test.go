@@ -48,8 +48,8 @@ var _ = Describe("Service", func() {
 				ctx context.Context
 			)
 			Context("When called with a valid key and plaintext to encrypt", func() {
-				req.Key = "kB+BmVehHNsxaCqOaZN/s+c/aqRfk4LSfNi52SJOb3I="
-				req.ToEncrypt = "Hello Peter"
+				req.Key = "lwL3V4RoI7vnoh8TbgQ16mr+M60cdLrPhpHJ923Oldw="
+				req.PlainText = "This is the best message ever"
 				BeforeEach(func() {
 					et, err = s.GCME(ctx, req)
 				})
@@ -67,8 +67,8 @@ var _ = Describe("Service", func() {
 				ctx context.Context
 			)
 			Context("When called with a valid key and cyphertext to decrypt", func() {
-				req.Key = "kB+BmVehHNsxaCqOaZN/s+c/aqRfk4LSfNi52SJOb3I="
-				req.ToDecrypt = "YzyMcxu8OIE9Tz2nMvpHHlsJq/2CiIx2lFe2/4Ua1pu2cQqIPSWM"
+				req.Key = "lwL3V4RoI7vnoh8TbgQ16mr+M60cdLrPhpHJ923Oldw="
+				req.CipherText = "wFRV/VSW4GoeDD2bVC6IGphCv93wgyBxIhRSr61S0Aq0RunXO8VOYeXOyIVCWYhSObwrLRlaOINT"
 				BeforeEach(func() {
 					dt, err = s.GCMD(ctx, req)
 					if err != nil {
@@ -76,7 +76,7 @@ var _ = Describe("Service", func() {
 					}
 				})
 				It("Should return the decrpyted text", func() {
-					Expect(dt).To(Equal("Hello Peter"))
+					Expect(dt).To(Equal("This is the best message ever"))
 				})
 			})
 		})

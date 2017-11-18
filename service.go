@@ -12,6 +12,9 @@ import (
 	l "github.com/go-kit/kit/log"
 )
 
+// NonceSize - Set generic nonce size cited in RFC5084
+const NonceSize = 12
+
 // Service is an interface that contains all of the endpoints the server will expose
 type Service interface {
 	GenerateKey(ctx context.Context, req GenerateKeyRequest) (string, error)
@@ -58,7 +61,7 @@ func (fohnhabService) GCME(ctx context.Context, req GCMERequest) (string, error)
 		e error
 	)
 	key, _ := base64.StdEncoding.DecodeString(req.Key)
-	plaintext := []byte(req.ToEncrypt)
+	plaintext := []byte(req.PlainText)
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
@@ -69,8 +72,7 @@ func (fohnhabService) GCME(ctx context.Context, req GCMERequest) (string, error)
 	if err != nil {
 		return "", err
 	}
-
-	nonce := new([12]byte)
+	nonce := make([]byte, NonceSize)
 	io.ReadFull(rand.Reader, nonce[:])
 	out := gcm.Seal(nonce[:], nonce[:], plaintext, nil)
 	s = base64.StdEncoding.EncodeToString(out)
@@ -83,7 +85,7 @@ func (fohnhabService) GCMD(ctx context.Context, req GCMDRequest) (string, error)
 		e error
 	)
 	key, _ := base64.StdEncoding.DecodeString(req.Key)
-	ciphertext, _ := base64.StdEncoding.DecodeString(req.ToDecrypt)
+	ciphertext, _ := base64.StdEncoding.DecodeString(req.CipherText)
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return "", err
@@ -93,7 +95,7 @@ func (fohnhabService) GCMD(ctx context.Context, req GCMDRequest) (string, error)
 	if err != nil {
 		return "", err
 	}
-	nonce := make([]byte, 12)
+	nonce := make([]byte, NonceSize)
 
 	copy(nonce, ciphertext)
 	plaintext, err := aesgcm.Open(nil, nonce[:], ciphertext[12:], nil)

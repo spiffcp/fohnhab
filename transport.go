@@ -23,7 +23,7 @@ type GenerateKeyResponse struct {
 // GCMERequest models an incoming request to the GCME..Endpoint
 type GCMERequest struct {
 	Key       string `json:"key"`
-	ToEncrypt string `json:"plaintext"`
+	PlainText string `json:"plaintext"`
 }
 
 type GCMEResponse struct {
@@ -33,11 +33,11 @@ type GCMEResponse struct {
 
 // GCMDRequest models an incoming request to the GCMDEncdpoint
 type GCMDRequest struct {
-	Key       string `json:"key"`
-	ToDecrypt string `json:"ciphertext"`
+	Key        string `json:"key"`
+	CipherText string `json:"ciphertext"`
 }
 
-type GCMDRespons struct {
+type GCMDResponse struct {
 	PlainText string `json:"plaintext"`
 	Err       string `json:"err,omitempty"`
 }
@@ -59,6 +59,8 @@ func MakeEndpoints(svc Service, logger l.Logger) Endpoints {
 	ep.GenerateKeyEndpoint = transportMiddleware(l.With(logger, "method", "keygen"))(ep.GenerateKeyEndpoint)
 	ep.GCMEncryptEndpoint = MakeGMCEncryptEndpoint(svc)
 	ep.GCMEncryptEndpoint = transportMiddleware(l.With(logger, "method", "encrypt"))(ep.GCMEncryptEndpoint)
+	ep.GCMDecryptEndpoint = MakeGMCDecryptEndpoint(svc)
+	ep.GCMDecryptEndpoint = transportMiddleware(l.With(logger, "method", "decrypt"))(ep.GCMDecryptEndpoint)
 	return ep
 }
 
@@ -151,6 +153,48 @@ func DecodeGCMEncryptRequest(ctx context.Context, r *http.Request) (interface{},
 
 func EncodeGCMEncryptResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
 	err := response.(GCMEResponse).Err
+	if err != "" {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	w.Header().Set("Context-Type", "application/json")
+	return json.NewEncoder(w).Encode(response)
+}
+
+func MakeGMCDecryptEndpoint(svc Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		var (
+			req  GCMDRequest
+			resp GCMDResponse
+		)
+		req = request.(GCMDRequest)
+		pt, err := svc.GCMD(ctx, req)
+		if err != nil {
+			resp.PlainText = pt
+			resp.Err = err.Error()
+			return resp, nil
+		}
+		resp.PlainText = pt
+		return resp, nil
+	}
+}
+
+func (e Endpoints) GCMD(ctx context.Context, r *http.Request) (interface{}, error) {
+	resp, _ := e.GCMDecryptEndpoint(ctx, r)
+	GCMDresp := resp.(GCMDResponse)
+	return GCMDresp, nil
+}
+
+func DecodeGCMDecryptRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	var req GCMDRequest
+	var err error
+	if err = json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return nil, err
+	}
+	return req, err
+}
+
+func EncodeGCMDecryptResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	err := response.(GCMDResponse).Err
 	if err != "" {
 		w.WriteHeader(http.StatusBadRequest)
 	}
