@@ -9,7 +9,7 @@
 
 [[projects]]
   name = "github.com/go-kit/kit"
-  packages = ["endpoint","log","metrics","metrics/internal/lv","metrics/prometheus","ratelimit","transport/http"]
+  packages = ["endpoint","log","metrics","metrics/internal/lv","metrics/prometheus","transport/http"]
   revision = "4dc7be5d2d12881735283bcab7352178e190fc71"
   version = "v0.6.0"
 
@@ -30,12 +30,6 @@
   name = "github.com/golang/protobuf"
   packages = ["proto"]
   revision = "1643683e1b54a9e88ad26d98f81400c8c9d9f4f9"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/juju/ratelimit"
-  packages = ["."]
-  revision = "59fac5042749a5afb9af70e813da1dd5474f0167"
 
 [[projects]]
   branch = "master"
@@ -112,6 +106,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9c96162a03cda829e8bfaa9295b704da2c69a13e1f3f01f512cad476a53b893b"
+  inputs-digest = "81dee94de195df4409fe856c0aef49a4b03183bfb7b3b376e02cca7435db62c7"
   solver-name = "gps-cdcl"
   solver-version = 1
