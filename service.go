@@ -95,7 +95,7 @@ func (fohnhabService) GCME(ctx context.Context, req GCMERequest) (string, error)
 	nonce := make([]byte, NonceSize)
 	io.ReadFull(rand.Reader, nonce[:])
 
-	out := gcm.Seal(nil, nonce[:], plaintext, nil)
+	out := gcm.Seal(nonce[:], nonce[:], plaintext, nil)
 	s = base64.StdEncoding.EncodeToString(out)
 	return s, e
 }
